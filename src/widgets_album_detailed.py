@@ -601,21 +601,10 @@ class AlbumDetailedWidget(Gtk.Bin, AlbumWidget):
             else:
                 Lp().player.append_to_queue(track_id)
         else:
-            # Do not update album list
-            if not Lp().player.is_party and not\
-                    Lp().settings.get_enum("playback") == NextContext.STOP:
-                # If in artist view, reset album list
-                if self._filter_ids and Type.CHARTS not in self._filter_ids:
-                    Lp().player.set_albums(track_id,
-                                           self._filter_ids,
-                                           self._album.genre_ids)
-                # Else, add album if missing
-                elif not Lp().player.has_album(self._album):
-                    Lp().player.add_album(self._album)
-            # Clear albums if user clicked on a track from a new album
-            elif Lp().settings.get_enum("playback") == NextContext.STOP:
-                if not Lp().player.has_album(self._album):
-                    Lp().player.clear_albums()
+            if not Lp().player.has_album(self._album):
+                Lp().player.clear_albums()
+                Lp().player.play_album(self._album)
+
             self.__show_spinner(widget, track_id)
             track = Track(track_id)
             Lp().player.load(track)
